@@ -1,0 +1,328 @@
+//Q1(a)
+#include <iostream>
+using namespace std;
+
+struct CNode {
+    int data;
+    CNode* next;
+};
+
+class CircularList {
+public:
+    CNode* head = NULL;
+
+    void insertFirst(int val) {
+        CNode* n = new CNode{val, NULL};
+        if (!head) { head = n; n->next = head; return; }
+        CNode* temp = head;
+        while (temp->next != head) temp = temp->next;
+        n->next = head;
+        temp->next = n;
+        head = n;
+    }
+
+    void insertLast(int val) {
+        CNode* n = new CNode{val, NULL};
+        if (!head) { head = n; n->next = head; return; }
+        CNode* temp = head;
+        while (temp->next != head) temp = temp->next;
+        temp->next = n;
+        n->next = head;
+    }
+
+    void insertAfter(int key, int val) {
+        if (!head) return;
+        CNode* temp = head;
+        do {
+            if (temp->data == key) {
+                CNode* n = new CNode{val, temp->next};
+                temp->next = n;
+                return;
+            }
+            temp = temp->next;
+        } while (temp != head);
+    }
+
+    void insertBefore(int key, int val) {
+        if (!head) return;
+        if (head->data == key) { insertFirst(val); return; }
+        CNode* temp = head;
+        do {
+            if (temp->next->data == key) {
+                CNode* n = new CNode{val, temp->next};
+                temp->next = n; 
+                return;
+            }
+            temp = temp->next;
+        } while (temp != head);
+    }
+
+    void deleteNode(int key) {
+        if (!head) return;
+        if (head->data == key) {
+            if (head->next == head) { delete head; head = NULL; return; }
+            CNode* temp = head;
+            while (temp->next != head) temp = temp->next;
+            CNode* del = head;
+            temp->next = head->next;
+            head = head->next;
+            delete del;
+            return;
+        }
+        CNode* temp = head;
+        while (temp->next != head && temp->next->data != key) temp = temp->next;
+        if (temp->next->data == key) {
+            CNode* del = temp->next;
+            temp->next = del->next;
+            delete del;
+        }
+    }
+
+    bool search(int key) {
+        if (!head) return false;
+        CNode* temp = head;
+        do {
+            if (temp->data == key) return true;
+            temp = temp->next;
+        } while (temp != head);
+        return false;
+    }
+
+    void display() {
+        if (!head) return;
+        CNode* temp = head;
+        do {
+            cout << temp->data << " ";
+            temp = temp->next;
+        } while (temp != head);
+    }
+};
+//Q2(b)
+struct DNode {
+    int data;
+    DNode* prev;
+    DNode* next;
+};
+
+class DoublyList {
+public:
+    DNode* head = NULL;
+
+    void insertFirst(int val) {
+        DNode* n = new DNode{val, NULL, head};
+        if (head) head->prev = n;
+        head = n;
+    }
+
+    void insertLast(int val) {
+        DNode* n = new DNode{val, NULL, NULL};
+        if (!head) { head = n; return; }
+        DNode* temp = head;
+        while (temp->next) temp = temp->next;
+        temp->next = n;
+        n->prev = temp;
+    }
+
+    void insertAfter(int key, int val) {
+        DNode* temp = head;
+        while (temp) {
+            if (temp->data == key) {
+                DNode* n = new DNode{val, temp, temp->next};
+                if (temp->next) temp->next->prev = n;
+                temp->next = n;
+                return;
+            }
+            temp = temp->next;
+        }
+    }
+
+    void insertBefore(int key, int val) {
+        if (!head) return;
+        if (head->data == key) { insertFirst(val); return; }
+        DNode* temp = head;
+        while (temp) {
+            if (temp->data == key) {
+                DNode* n = new DNode{val, temp->prev, temp};
+                temp->prev->next = n;
+                temp->prev = n;
+                return;
+            }
+            temp = temp->next;
+        }
+    }
+
+    void deleteNode(int key) {
+        if (!head) return;
+        if (head->data == key) {
+            DNode* del = head;
+            head = head->next;
+            if (head) head->prev = NULL;
+            delete del;
+            return;
+        }
+        DNode* temp = head;
+        while (temp && temp->data != key) temp = temp->next;
+        if (!temp) return;
+        if (temp->prev) temp->prev->next = temp->next;
+        if (temp->next) temp->next->prev = temp->prev;
+        delete temp;
+    }
+
+    bool search(int key) {
+        DNode* temp = head;
+        while (temp) {
+            if (temp->data == key) return true;
+            temp = temp->next;
+        }
+        return false;
+    }
+
+    void display() {
+        DNode* temp = head;
+        while (temp) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+    }
+};
+//Q(2)
+void displayCircularWithRepeat(CNode* head) {
+    if (!head) return;
+    CNode* temp = head;
+    do {
+        cout << temp->data << " ";
+        temp = temp->next;
+    } while (temp != head);
+    cout << head->data;
+}
+//Q 3(a)
+int sizeDoubly(DNode* head) {
+    int c = 0;
+    while (head) {
+        c++;
+        head = head->next;
+    }
+    return c;
+}
+//Q 3(b)
+int sizeCircular(CNode* head) {
+    if (!head) return 0;
+    int c = 0;
+    CNode* temp = head;
+    do {
+        c++;
+        temp = temp->next;
+    } while (temp != head);
+    return c;
+}
+//Q(4)
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Node {
+    char data;
+    Node* prev;
+    Node* next;
+};
+
+int main() {
+    Node* head = NULL;
+    Node* tail = NULL;
+
+    string s;
+    cout << "Enter string: ";
+    cin >> s;
+
+   
+    for (int i = 0; i < s.length(); i++) {
+        Node* newNode = new Node();
+        newNode->data = s[i];
+        newNode->next = NULL;
+        newNode->prev = tail;
+
+        if (tail != NULL) tail->next = newNode;
+        else head = newNode; // first node
+
+        tail = newNode;
+    }
+
+   
+    Node* left = head;
+    Node* right = tail;
+
+    bool isPalindrome = true;
+
+    while (left != NULL && right != NULL && left != right && left->prev != right) {
+        if (left->data != right->data) {
+            isPalindrome = false;
+            break;
+        }
+        left = left->next;
+        right = right->prev;
+    }
+
+    if (isPalindrome) cout << "Palindrome";
+    else cout << "Not Palindrome";
+
+    return 0;
+}
+//Q(5)
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+int main() {
+    Node* head = NULL;
+    Node* tail = NULL;
+
+    int n, x;
+    cout << "Enter number of nodes: ";
+    cin >> n;
+
+    
+    for (int i = 0; i < n; i++) {
+        cin >> x;
+
+        Node* newNode = new Node();
+        newNode->data = x;
+        newNode->next = NULL;
+
+        if (head == NULL) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail->next = newNode;
+            tail = newNode;
+        }
+    }
+
+    
+     tail->next = head; 
+
+    
+    Node* slow = head;
+    Node* fast = head;
+
+    bool circular = false;
+
+    while (fast != NULL && fast->next != NULL) {
+        slow = slow->next;             
+        fast = fast->next->next;       
+        if (slow == fast) {           
+            circular = true;
+            break;
+        }
+    }
+
+    if (circular)
+        cout << "Circular Linked List";
+    else
+        cout << "NOT Circular";
+
+    return 0;
+}
